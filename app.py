@@ -4,7 +4,6 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 app = Flask(__name__)
-story = ""
 line_bot_api = LineBotApi('6pOxv7ybUtKoBOLmpQNH7KGsQphTg/HGVYeFA04V7bMnNJIwA7JDPtjNOLBoDCFlpq2Bh17EaBtsM+az7kjfP72X1bwiz0x+GdVdTm2Vo2Vgq4MaoY3IOcBB6jCKIugiBXXEDPjLrbR0fDksmDpkKgdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('f10df6fc344a062c11cb7fc69daaa912')
 
@@ -43,6 +42,7 @@ def parse_command(message):
     content = parts[1] if len(parts) > 1 else ''
     return command, content
 
+story = ""
 def story_continuation(content):
     global story  # 将 story 声明为全局变量
     # 在这里根据内容进行故事接龙的逻辑处理

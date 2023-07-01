@@ -14,6 +14,7 @@ def callback():
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
+        print("Invalid signature. Please check your channel access token/channel secret.")
         abort(400)
     return 'OK'
 
@@ -27,8 +28,8 @@ def handle_message(event):
     # 根据命令执行相应的操作
     if command == '!接龍':
         response = story_continuation(content)
-    else:
-        response = "不支持的命令"
+    # else:
+    #     response = "不支持的命令"
 
     line_bot_api.reply_message(
         event.reply_token,
@@ -42,12 +43,19 @@ def parse_command(message):
     return command, content
 
 def story_continuation(content):
+    global story  # 将 story 声明为全局变量
     # 在这里根据内容进行故事接龙的逻辑处理
     # 您可以将新的内容添加到现有故事中
     # 并返回更新后的故事
     # 示例逻辑：
-    story = '很久很久以前，有一只小猫。'
-    return story + ' ' + content
+    if story == "":
+        story = '現在開始回報業績。\n'
+    else:
+        story += '\n'
+    story += content
+
+    return story
 
 if __name__ == '__main__':
+    story = ""
     app.run()

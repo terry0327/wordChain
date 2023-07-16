@@ -105,7 +105,7 @@ def story_continuation(groupId):
     group_data_list = ref.child('Group').child(groupId).get()
 
     if group_data_list is not None:
-        for group_data in group_data_list.values():
+        for group_data in group_data_list:
             if 'messages' in group_data:
                 report += "\n" + group_data.get("messages")
     else:

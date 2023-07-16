@@ -1,3 +1,5 @@
+import json
+# Line Message Api
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -50,14 +52,38 @@ def handle_message(event):
 
     # 根据命令执行相应的操作
     if command == '!接龍':
-        # PUT操作示例：更新数据
-        ref.child('Group').child(group_id).update({
+        # 获取当前Group节点的数据
+        group_data = ref.child('Group').child(group_id).get()
+        
+        # 检查group_data是否存在，如果不存在则创建一个新的字典
+        if not group_data:
+            group_data = {}
+
+        # 获取当前Group节点下的所有消息数量
+        message_count = len(group_data)
+
+        # 构建新消息的键，使用字符串表示数字索引
+        new_message_key = str(message_count + 1)
+
+        # 构建新消息的数据
+        new_message_data = {
             'groupName': group_name,
+            'messages': content,
             'userId': user_id,
-            'userName': user_name,
-            'messages': content
-        })
-        response = story_continuation(content, group_id)
+            'userName': user_name
+        }
+
+        # 更新数据，将新消息添加到Group节点中
+        ref.child('Group').child(group_id).child(new_message_key).set(new_message_data)
+       
+        # PUT操作示例：更新数据
+        # ref.child('Group').child(group_id).update({
+        #     'groupName': group_name,
+        #     'userId': user_id,
+        #     'userName': user_name,
+        #     'messages': content
+        # })
+        response = story_continuation(group_id)
 
     # else:
     #     response = "不支持的命令"
@@ -73,13 +99,17 @@ def parse_command(message):
     content = parts[1] if len(parts) > 1 else ''
     return command, content
 
-def story_continuation(content, groupId):
+def story_continuation(groupId):
     report = '現在開始回報業績。\n'
-    messages_snapshot = ref.child('Group').child(groupId).child('messages').get()
-    if messages_snapshot:
-        messages = messages_snapshot.values()
-        for message_data in messages:
-            report += (message_data.get('content') + '\n')
+    messagesJson = ref.child('Group').child(groupId).get()
+    data_dict = json.loads(messagesJson)
+    if(messagesJson):
+        if groupId in data_dict["Group"]:
+            group_data = data_dict["Group"][groupId]
+            for message_id, message_data in group_data.items():
+                report += "\n" + message_data.get("messages")
+    else:
+        report = "資料庫中並無此筆資料，請洽開發人員"
     # if message == "":
     #     story = '現在開始回報業績。\n'
     # else:

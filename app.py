@@ -75,9 +75,10 @@ def parse_command(message):
 
 def story_continuation(content, groupId):
     report = '現在開始回報業績。\n'
-    messages = ref.child('Group').child(groupId).child('messages').get()
-    if messages:
-        for message_id, message_data in messages.items():
+    messages_snapshot = ref.child('Group').child(groupId).child('messages').get()
+    if messages_snapshot:
+        messages = messages_snapshot.values()
+        for message_data in messages:
             report += (message_data.get('content') + '\n')
     # if message == "":
     #     story = '現在開始回報業績。\n'

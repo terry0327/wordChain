@@ -16,13 +16,6 @@ firebase_admin.initialize_app(cred, {
 # 获取数据库引用
 ref = db.reference('/')
 
-# PUT操作示例：更新数据
-ref.child('Group').child('group1').update({
-    'name': 'John Doe',
-    'age': 30,
-    'city': 'New York'
-})
-
 # 示例：从数据库读取数据
 # data = ref.get()
 # print(data)
@@ -45,13 +38,27 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = event.message.text
+    # GroupId, GroupName, userId, userName, Message  
+    group_id = event.source.group_id
+    group_name = line_bot_api.get_group_summary(group_id).group_name
+    user_id = event.source.user_id
+    user_profile = line_bot_api.get_profile(user_id)
+    user_name = user_profile.display_name
 
     # 提取命令和内容
     command, content = parse_command(message)
 
     # 根据命令执行相应的操作
     if command == '!接龍':
-        response = story_continuation(content)
+        # PUT操作示例：更新数据
+        ref.child('Group').child(group_id).update({
+            'groupName': group_name,
+            'userId': user_id,
+            'userName': user_name,
+            'message': content
+        })
+        response = story_continuation(content, group_id)
+
     # else:
     #     response = "不支持的命令"
 
@@ -66,20 +73,19 @@ def parse_command(message):
     content = parts[1] if len(parts) > 1 else ''
     return command, content
 
-story = ""
-def story_continuation(content):
-    global story  # 将 story 声明为全局变量
-    # 在这里根据内容进行故事接龙的逻辑处理
-    # 您可以将新的内容添加到现有故事中
-    # 并返回更新后的故事
-    # 示例逻辑：
-    if story == "":
-        story = '現在開始回報業績。\n'
-    else:
-        story += '\n'
-    story += content
+def story_continuation(content, groupId):
+    report = '現在開始回報業績。\n'
+    message = ref.child('Group').child(groupId).child('message').get()
+    if message:
+        for message_id, message_data in message.items():
+            report += (message_data.get('content') + '\n')
+    # if message == "":
+    #     story = '現在開始回報業績。\n'
+    # else:
+    #     story += '\n'
+    # story += content
 
-    return story
+    return report
 
 if __name__ == '__main__':
     app.run()

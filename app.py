@@ -55,7 +55,7 @@ def handle_message(event):
             'groupName': group_name,
             'userId': user_id,
             'userName': user_name,
-            'message': content
+            'messages': content
         })
         response = story_continuation(content, group_id)
 
@@ -75,9 +75,9 @@ def parse_command(message):
 
 def story_continuation(content, groupId):
     report = '現在開始回報業績。\n'
-    message = ref.child('Group').child(groupId).child('message').get()
-    if message:
-        for message_id, message_data in message.items():
+    messages = ref.child('Group').child(groupId).child('messages').get()
+    if messages:
+        for message_id, message_data in messages.items():
             report += (message_data.get('content') + '\n')
     # if message == "":
     #     story = '現在開始回報業績。\n'

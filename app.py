@@ -2,6 +2,30 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
+# firebase
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+
+# 初始化Firebase Admin SDK
+cred = credentials.Certificate("./linebot-1eae2-firebase-adminsdk-rcme0-68fa3f8a88.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://linebot-1eae2-default-rtdb.asia-southeast1.firebasedatabase.app/'
+})
+
+# 获取数据库引用
+ref = db.reference('/')
+
+# PUT操作示例：更新数据
+ref.child('Group').child('group1').update({
+    'name': 'John Doe',
+    'age': 30,
+    'city': 'New York'
+})
+
+# 示例：从数据库读取数据
+# data = ref.get()
+# print(data)
 
 app = Flask(__name__)
 line_bot_api = LineBotApi('6pOxv7ybUtKoBOLmpQNH7KGsQphTg/HGVYeFA04V7bMnNJIwA7JDPtjNOLBoDCFlpq2Bh17EaBtsM+az7kjfP72X1bwiz0x+GdVdTm2Vo2Vgq4MaoY3IOcBB6jCKIugiBXXEDPjLrbR0fDksmDpkKgdB04t89/1O/w1cDnyilFU=')

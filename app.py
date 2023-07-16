@@ -57,13 +57,13 @@ def handle_message(event):
         
         # 检查group_data是否存在，如果不存在则创建一个新的字典
         if not group_data:
-            group_data = {}
+            group_data = []
 
         # 获取当前Group节点下的所有消息数量
         message_count = len(group_data)
 
         # 构建新消息的键，使用字符串表示数字索引
-        new_message_key = str(message_count + 1)
+        #new_message_key = str(message_count + 1)
 
         # 构建新消息的数据
         new_message_data = {
@@ -74,7 +74,8 @@ def handle_message(event):
         }
 
         # 更新数据，将新消息添加到Group节点中
-        ref.child('Group').child(group_id).child(new_message_key).set(new_message_data)
+        group_data.append(new_message_data)
+        ref.child('Group').child(group_id).set(group_data)
        
         # PUT操作示例：更新数据
         # ref.child('Group').child(group_id).update({
@@ -103,9 +104,10 @@ def story_continuation(groupId):
     report = '現在開始回報業績。\n'
     group_data_list = ref.child('Group').child(groupId).get()
 
-    if group_data_list:
-        for group_data in group_data_list:
-            report += "\n" + group_data.get("messages")
+    if group_data_list is not None:
+        for group_data in group_data_list.values():
+            if 'messages' in group_data:
+                report += "\n" + group_data.get("messages")
     else:
         report = "資料庫中並無此筆資料，請洽開發人員"
     # if message == "":

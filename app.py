@@ -102,6 +102,8 @@ def parse_command(message):
 def story_continuation(groupId):
     report = '現在開始回報業績。\n'
     messagesJson = ref.child('Group').child(groupId).get()
+    # 從python字典轉為Json
+    messagesJson = json.dumps(messagesJson)
     data_dict = json.loads(messagesJson)
     if(messagesJson):
         if groupId in data_dict["Group"]:

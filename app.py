@@ -110,7 +110,7 @@ def query(groupId):
     report = '現在開始回報業績。\n'
     group_data_list = ref.child('Group').child(groupId).get()
     print(len(group_data_list))
-    if len(group_data_list):
+    if len(group_data_list) is not None:
         for group_data in group_data_list:
             if isinstance(group_data, dict) and 'messages' in group_data:
         # report += "\n" + group_data.get("messages")

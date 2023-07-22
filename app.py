@@ -50,7 +50,7 @@ def handle_message(event):
     # 提取命令和内容
     command, content = parse_command(message)
 
-    # 根据命令执行相应的操作
+    # 根據命令執行相應的操作(!接龍、!刪除、!查看、!編輯)
     if command == '!接龍':
         # 获取当前Group节点的数据
         group_data = ref.child('Group').child(group_id).get()
@@ -84,9 +84,14 @@ def handle_message(event):
         #     'userName': user_name,
         #     'messages': content
         # })
-        response = story_continuation(group_id)
+        response = query(group_id)
     elif command == '!刪除':
-        ref.child('Group').child(group_id).delete()
+        delete(group_id)
+        response = '已清除資料'
+    elif command == '!查看':
+        response = query(group_id)
+    elif command == '!編輯':
+        response = edit(group_id, user_id, content)
     # else:
     #     response = "不支持的命令"
 
@@ -101,7 +106,7 @@ def parse_command(message):
     content = parts[1] if len(parts) > 1 else ''
     return command, content
 
-def story_continuation(groupId):
+def query(groupId):
     report = '現在開始回報業績。\n'
     group_data_list = ref.child('Group').child(groupId).get()
 
@@ -119,6 +124,22 @@ def story_continuation(groupId):
     #     story += '\n'
     # story += content
 
+    return report
+
+def delete(group_id):
+    ref.child('Group').child(group_id).delete()
+
+def edit(group_id, user_id, message):
+    report = '現在開始回報業績。\n'
+    group_data_list = ref.child('Group').child(group_id).get()
+    if len(group_data_list):
+        for group_data in group_data_list:
+            if isinstance(group_data, dict) and 'messages' in group_data:
+        # report += "\n" + group_data.get("messages")
+                print(str(group_data["messages"]))
+                report += "\n" + group_data["messages"]
+    else:
+        report = "資料庫中並無此筆資料，請洽開發人員"
     return report
 
 if __name__ == '__main__':

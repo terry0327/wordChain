@@ -85,7 +85,8 @@ def handle_message(event):
         #     'messages': content
         # })
         response = story_continuation(group_id)
-
+    elif command == '!刪除':
+        ref.child('Group').child(group_id).delete()
     # else:
     #     response = "不支持的命令"
 

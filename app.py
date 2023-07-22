@@ -108,7 +108,7 @@ def story_continuation(groupId):
         # for group_data in group_data_list:
         #     if 'messages' in group_data:
         # report += "\n" + group_data.get("messages")
-        print("type(group_data_list)：" + type(group_data_list) + "\ngroup_data_list：" + group_data_list)
+        print("type(group_data_list)：" + str(type(group_data_list)) + "\ngroup_data_list：" + group_data_list)
         report += "\n" + group_data_list
     else:
         report = "資料庫中並無此筆資料，請洽開發人員"

@@ -105,11 +105,11 @@ def story_continuation(groupId):
     group_data_list = ref.child('Group').child(groupId).get()
 
     if len(group_data_list):
-        # for group_data in group_data_list:
-        #     if 'messages' in group_data:
+        for group_data in group_data_list:
+            if isinstance(group_data, dict) and 'messages' in group_data:
         # report += "\n" + group_data.get("messages")
-        print("type(group_data_list)：" + str(type(group_data_list)) + "\ngroup_data_list：" + str(group_data_list))
-        report += "\n" + group_data_list
+                print(str(group_data["messages"]))
+                report += "\n" + group_data["messages"]
     else:
         report = "資料庫中並無此筆資料，請洽開發人員"
     # if message == "":

@@ -104,10 +104,12 @@ def story_continuation(groupId):
     report = '現在開始回報業績。\n'
     group_data_list = ref.child('Group').child(groupId).get()
 
-    if group_data_list is not None:
-        for group_data in group_data_list:
-            if 'messages' in group_data:
-                report += "\n" + group_data.get("messages")
+    if group_data_list.exists:
+        # for group_data in group_data_list:
+        #     if 'messages' in group_data:
+        # report += "\n" + group_data.get("messages")
+        print("type(group_data_list)：" + type(group_data_list) + "\ngroup_data_list：" + group_data_list)
+        report += "\n" + group_data_list
     else:
         report = "資料庫中並無此筆資料，請洽開發人員"
     # if message == "":

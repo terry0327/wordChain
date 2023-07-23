@@ -119,10 +119,11 @@ def query(groupNode, user_id):
     if group_data_list is not None:
         print("group_data_list：" + str(group_data_list))
         for user_data in group_data_list:
-           print("group_data" + str(user_data))
+           print("\nuser_data：" + str(user_data))
+           user_id, user_data = list(user_data.items())[0]
            if isinstance(user_data, dict) and 'messages' in user_data:
-                print(str(user_data[user_id]["messages"]))
-                report += "\n" + user_data[user_id]["messages"]
+                print(str(user_data["messages"]))
+                report += "\n" + user_data["messages"]
     else:
         report = "資料庫中並無資料，請先使用指令 !接龍 新增資料"
 

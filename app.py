@@ -121,7 +121,7 @@ def query(groupNode, user_id):
         for user_data in group_data_list:
            print("group_data" + str(user_data))
            if isinstance(user_data, dict) and 'messages' in user_data:
-                print(str(user_data["messages"]))
+                print(str(user_data[user_id]["messages"]))
                 report += "\n" + user_data[user_id]["messages"]
     else:
         report = "資料庫中並無資料，請先使用指令 !接龍 新增資料"

@@ -54,7 +54,7 @@ def handle_message(event):
     if command == '!接龍':
         groupNode = group_name + group_id
         # 获取当前Group节点的数据
-        group_data = ref.child('Group').child(groupNode).child('users').get()
+        group_data = ref.child('Group').child(groupNode).get()
         
         # 检查group_data是否存在，如果不存在则创建一个新的字典
         if not group_data:
@@ -115,7 +115,7 @@ def parse_command(message):
 
 def query(groupNode, user_id):
     report = '現在開始回報業績。\n'
-    group_data_list = ref.child('Group').child(groupNode).child('users').child(user_id).get()
+    group_data_list = ref.child('Group').child(groupNode).child(user_id).get()
     if group_data_list is not None:
         for user_data in group_data_list:
            if isinstance(user_data, dict) and 'messages' in user_data:

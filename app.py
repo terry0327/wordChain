@@ -52,8 +52,9 @@ def handle_message(event):
 
     # 根據命令執行相應的操作(!接龍、!刪除、!查看、!編輯)
     if command == '!接龍':
+        groupNode = group_name + group_id
         # 获取当前Group节点的数据
-        group_data = ref.child('Group').child(group_id).get()
+        group_data = ref.child('Group').child(groupNode).child('users').get()
         
         # 检查group_data是否存在，如果不存在则创建一个新的字典
         if not group_data:
@@ -73,18 +74,15 @@ def handle_message(event):
         #     'userName': user_name
         # }
         new_message_data = {
-            'groupName': group_name,
-            'users': {
-                user_id: {
-                    'userName': user_name,
-                    'messages': content
-                }
+            user_id: {
+                'userName': user_name,
+                'messages': content
             }
         }
 
         # 更新数据，将新消息添加到Group节点中
         group_data.append(new_message_data)
-        ref.child('Group').child(group_id).set(group_data)
+        ref.child('Group').child(groupNode).set(group_data)
        
         # PUT操作示例：更新数据
         # ref.child('Group').child(group_id).update({
@@ -93,14 +91,14 @@ def handle_message(event):
         #     'userName': user_name,
         #     'messages': content
         # })
-        response = query(group_id)
+        response = query(groupNode)
     elif command == '!刪除':
-        delete(group_id)
+        delete(groupNode)
         response = '已清除資料'
     elif command == '!查看':
-        response = query(group_id)
+        response = query(groupNode)
     elif command == '!編輯':
-        response = edit(group_id, user_id, content)
+        response = edit(groupNode, user_id, content)
     # else:
     #     response = "不支持的命令"
 
@@ -115,28 +113,25 @@ def parse_command(message):
     content = parts[1] if len(parts) > 1 else ''
     return command, content
 
-def query(groupId):
+def query(groupNode):
     report = '現在開始回報業績。\n'
-    group_data_list = ref.child('Group').child(groupId).get()
+    group_data_list = ref.child('Group').child(groupNode).child('users').get()
     if group_data_list is not None:
-        group_name = group_data_list.get('groupName')
-        users = group_data_list.get('users', {})
-        for user_id, user_data in users.items():
-            user_name = user_data.get('userName')
-            messages = user_data.get('messages')
-            if messages:
-                report += f"\nGroup: {group_name}, User: {user_name}, Message: {messages}"
+        for user_data in group_data_list:
+           if isinstance(user_data, dict) and 'messages' in user_data:
+                print(str(user_data["messages"]))
+                report += "\n" + user_data["messages"]
     else:
         report = "資料庫中並無資料，請先使用指令 !接龍 新增資料"
 
     return report
 
-def delete(group_id):
-    ref.child('Group').child(group_id).delete()
+def delete(groupNode):
+    ref.child('Group').child(groupNode).delete()
 
-def edit(group_id, user_id, message):
+def edit(groupNode, user_id, message):
     report = '現在開始回報業績。\n'
-    group_data_list = ref.child('Group').child(group_id).get()
+    group_data_list = ref.child('Group').child(groupNode).get()
     if len(group_data_list):
         for group_data in group_data_list:
             if isinstance(group_data, dict) and 'messages' in group_data:

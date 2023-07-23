@@ -91,12 +91,12 @@ def handle_message(event):
         #     'userName': user_name,
         #     'messages': content
         # })
-        response = query(groupNode, user_id)
+        response = query(groupNode)
     elif command == '!刪除':
         delete(groupNode)
         response = '已清除資料'
     elif command == '!查看':
-        response = query(groupNode, user_id)
+        response = query(groupNode)
     elif command == '!編輯':
         response = edit(groupNode, user_id, content)
     # else:
@@ -113,7 +113,7 @@ def parse_command(message):
     content = parts[1] if len(parts) > 1 else ''
     return command, content
 
-def query(groupNode, user_id):
+def query(groupNode):
     report = '現在開始回報業績。\n'
     group_data_list = ref.child('Group').child(groupNode).get()
     if group_data_list is not None:
@@ -133,19 +133,10 @@ def delete(groupNode):
     ref.child('Group').child(groupNode).delete()
 
 def edit(groupNode, user_id, message):
-    report = '現在開始回報業績。\n'
-    group_data_list = ref.child('Group').child(groupNode).get()
-    if len(group_data_list):
-        print("group_data_list：" + str(group_data_list))
-        for group_data in group_data_list:
-            print("group_data" + str(group_data))
-            if isinstance(group_data, dict) and 'messages' in group_data:
-                # report += "\n" + group_data.get("messages")
-                print(str(group_data["messages"]))
-                report += "\n" + group_data["messages"]
-    else:
-        report = "資料庫中並無此筆資料，請洽開發人員"
-    return report
+    # user_data = ref.child('Group').child(groupNode).child(user_id).get()
+    ref.child('Group').child(groupNode).child(user_id).update({
+        'messages':message
+    })
 
 if __name__ == '__main__':
     app.run()

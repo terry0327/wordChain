@@ -46,13 +46,13 @@ def handle_message(event):
     user_id = event.source.user_id
     user_profile = line_bot_api.get_profile(user_id)
     user_name = user_profile.display_name
+    groupNode = group_name + group_id
 
     # 提取命令和内容
     command, content = parse_command(message)
 
     # 根據命令執行相應的操作(!接龍、!刪除、!查看、!編輯)
     if command == '!接龍':
-        groupNode = group_name + group_id
         # 获取当前Group节点的数据
         group_data = ref.child('Group').child(groupNode).get()
         
@@ -117,7 +117,9 @@ def query(groupNode, user_id):
     report = '現在開始回報業績。\n'
     group_data_list = ref.child('Group').child(groupNode).get()
     if group_data_list is not None:
+        print("group_data_list：" + str(group_data_list))
         for user_data in group_data_list:
+           print("group_data" + str(user_data))
            if isinstance(user_data, dict) and 'messages' in user_data:
                 print(str(user_data["messages"]))
                 report += "\n" + user_data["messages"]

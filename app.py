@@ -66,11 +66,20 @@ def handle_message(event):
         #new_message_key = str(message_count + 1)
 
         # 构建新消息的数据
+        # new_message_data = {
+        #     'groupName': group_name,
+        #     'messages': content,
+        #     'userId': user_id,
+        #     'userName': user_name
+        # }
         new_message_data = {
             'groupName': group_name,
-            'messages': content,
-            'userId': user_id,
-            'userName': user_name
+            'users': {
+                user_id: {
+                    'userName': user_name,
+                    'messages': content
+                }
+            }
         }
 
         # 更新数据，将新消息添加到Group节点中
@@ -110,18 +119,15 @@ def query(groupId):
     report = '現在開始回報業績。\n'
     group_data_list = ref.child('Group').child(groupId).get()
     if group_data_list is not None:
-        for group_data in group_data_list:
-            if isinstance(group_data, dict) and 'messages' in group_data:
-        # report += "\n" + group_data.get("messages")
-                print(str(group_data["messages"]))
-                report += "\n" + group_data["messages"]
+        group_name = group_data_list.get('groupName')
+        users = group_data_list.get('users', {})
+        for user_id, user_data in users.items():
+            user_name = user_data.get('userName')
+            messages = user_data.get('messages')
+            if messages:
+                report += f"\nGroup: {group_name}, User: {user_name}, Message: {messages}"
     else:
-        report = "資料庫中並無此筆資料，請洽開發人員"
-    # if message == "":
-    #     story = '現在開始回報業績。\n'
-    # else:
-    #     story += '\n'
-    # story += content
+        report = "資料庫中並無資料，請先使用指令 !接龍 新增資料"
 
     return report
 

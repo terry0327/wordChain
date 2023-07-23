@@ -133,9 +133,11 @@ def edit(groupNode, user_id, message):
     report = '現在開始回報業績。\n'
     group_data_list = ref.child('Group').child(groupNode).get()
     if len(group_data_list):
+        print("group_data_list：" + str(group_data_list))
         for group_data in group_data_list:
+            print("group_data" + str(group_data))
             if isinstance(group_data, dict) and 'messages' in group_data:
-        # report += "\n" + group_data.get("messages")
+                # report += "\n" + group_data.get("messages")
                 print(str(group_data["messages"]))
                 report += "\n" + group_data["messages"]
     else:

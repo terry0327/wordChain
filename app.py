@@ -91,12 +91,12 @@ def handle_message(event):
         #     'userName': user_name,
         #     'messages': content
         # })
-        response = query(groupNode)
+        response = query(groupNode, user_id)
     elif command == '!刪除':
         delete(groupNode)
         response = '已清除資料'
     elif command == '!查看':
-        response = query(groupNode)
+        response = query(groupNode, user_id)
     elif command == '!編輯':
         response = edit(groupNode, user_id, content)
     # else:
@@ -113,9 +113,9 @@ def parse_command(message):
     content = parts[1] if len(parts) > 1 else ''
     return command, content
 
-def query(groupNode):
+def query(groupNode, user_id):
     report = '現在開始回報業績。\n'
-    group_data_list = ref.child('Group').child(groupNode).child('users').get()
+    group_data_list = ref.child('Group').child(groupNode).child('users').child(user_id).get()
     if group_data_list is not None:
         for user_data in group_data_list:
            if isinstance(user_data, dict) and 'messages' in user_data:

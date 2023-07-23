@@ -115,7 +115,7 @@ def parse_command(message):
 
 def query(groupNode, user_id):
     report = '現在開始回報業績。\n'
-    group_data_list = ref.child('Group').child(groupNode).child(user_id).get()
+    group_data_list = ref.child('Group').child(groupNode).get()
     if group_data_list is not None:
         for user_data in group_data_list:
            if isinstance(user_data, dict) and 'messages' in user_data:

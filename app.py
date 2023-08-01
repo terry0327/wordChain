@@ -79,7 +79,7 @@ def handle_message(event):
         }
 
         # 更新数据，将新消息添加到Group节点中
-        group_data.append(new_message_data)
+        group_data[user_id] = new_message_data
         ref.child('Group').child(groupNode).child(user_id).set(group_data)
        
         # PUT操作示例：更新数据

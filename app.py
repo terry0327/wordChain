@@ -58,7 +58,7 @@ def handle_message(event):
         
         # 检查group_data是否存在，如果不存在则创建一个新的字典
         if not group_data:
-            group_data = []
+            group_data = {}
 
         # 获取当前Group节点下的所有消息数量
         message_count = len(group_data)
@@ -74,15 +74,13 @@ def handle_message(event):
         #     'userName': user_name
         # }
         new_message_data = {
-            user_id: {
-                'userName': user_name,
-                'messages': content
-            }
+            'userName': user_name,
+            'messages': content
         }
 
         # 更新数据，将新消息添加到Group节点中
         group_data.append(new_message_data)
-        ref.child('Group').child(groupNode).set(group_data)
+        ref.child('Group').child(groupNode).child(user_id).set(group_data)
        
         # PUT操作示例：更新数据
         # ref.child('Group').child(group_id).update({
@@ -98,7 +96,8 @@ def handle_message(event):
     elif command == '!查看':
         response = query(groupNode)
     elif command == '!編輯':
-        response = edit(groupNode, user_id, content)
+        edit(groupNode, user_id, content)
+        response = query(groupNode)
     # else:
     #     response = "不支持的命令"
 
@@ -132,6 +131,22 @@ def query(groupNode):
 def delete(groupNode):
     ref.child('Group').child(groupNode).delete()
 
+# TODO：節點錯誤，他直接新增一個ID
+# {
+#   "Group": {
+#     "接龍機器人開發C23da4fac70cbc6d9d8ff1d1b72900f47": {
+#       "0": {
+#         "U15e565fdb17db333bf2ccadc4f88db27": {
+#           "messages": "1成交一間房子",
+#           "userName": "林希哲"
+#         }
+#       },
+#       "U15e565fdb17db333bf2ccadc4f88db27": {
+#         "messages": "44444"
+#       }
+#     }
+#   }
+# }
 def edit(groupNode, user_id, message):
     # user_data = ref.child('Group').child(groupNode).child(user_id).get()
     ref.child('Group').child(groupNode).child(user_id).update({

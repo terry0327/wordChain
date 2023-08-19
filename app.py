@@ -120,8 +120,8 @@ def query(groupNode):
     group_data_list = ref.child('Group').child(groupNode).get()
     if group_data_list is not None:
         print("group_data_list：" + str(group_data_list))
-        for user_data in group_data_list:
-           print("\nuser_data：" + str(user_data))
+        for user_id, user_data in group_data_list.items():
+           print("\nuser_id" + str(user_id) + "\nuser_data：" + str(user_data))
         #   user_id, user_data = list(user_data.items())[0]
            if isinstance(user_data, dict) and 'messages' in user_data:
                 print(str(user_data["messages"]))

@@ -112,6 +112,9 @@ def parse_command(message):
     content = parts[1] if len(parts) > 1 else ''
     return command, content
 
+# TODO
+# 如果翔測試後能以userId獨立分開data
+# 那就只需要調整query就好，現在是找多一個0的那層
 def query(groupNode):
     report = '現在開始回報業績。\n'
     group_data_list = ref.child('Group').child(groupNode).get()
@@ -119,7 +122,7 @@ def query(groupNode):
         print("group_data_list：" + str(group_data_list))
         for user_data in group_data_list:
            print("\nuser_data：" + str(user_data))
-           user_id, user_data = list(user_data.items())[0]
+        #   user_id, user_data = list(user_data.items())[0]
            if isinstance(user_data, dict) and 'messages' in user_data:
                 print(str(user_data["messages"]))
                 report += "\n" + user_data["messages"]
